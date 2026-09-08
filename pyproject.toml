@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ow-teams-recognition"
+version = "0.1.0"
+
+description = "Desktop application for recognizing Overwatch teams from screenshots."
+
+requires-python = ">=3.11"
+
+dependencies = [ 
+	"PyQt6",
+	"easyocr",
+	"opencv-python",
+	"numpy",
+	"Pillow",
+	"keyboard"
+]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]

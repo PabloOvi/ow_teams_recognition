@@ -35,11 +35,16 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle( "Overwatch Teams Recognition" )
 
 		self.resize(
-			1100,
-			700
+			1200,
+			760
 		)
 
-		self.f9_pressed.connect( self.capture_match 	)
+		self.setMinimumSize(
+			1000,
+			650
+		)
+
+		self.f9_pressed.connect( self.capture_match )
 
 		self._create_ui()
 
@@ -64,6 +69,7 @@ class MainWindow(QMainWindow):
 			25
 		)
 
+		self._apply_styles()
 
 		# -------------------------------------------------
 		# TITLE
@@ -75,9 +81,10 @@ class MainWindow(QMainWindow):
 
 		title.setStyleSheet("""
 			QLabel {
-				color: white;
-				font-size: 24px;
+				color: #f2f2f2;
+				font-size: 28px;
 				font-weight: bold;
+				letter-spacing: 2px;
 			}
 		""")
 
@@ -91,13 +98,13 @@ class MainWindow(QMainWindow):
 
 		# Allied
 
-		self.allied_frame = self._create_team_frame( "EQUIPO ALIADO" )
+		self.allied_frame = self._create_team_frame( "EQUIPO ALIADO", "allied" )
 
 		teams_layout.addWidget( self.allied_frame )
 
 		# Enemy
 
-		self.enemy_frame = self._create_team_frame( "EQUIPO ENEMIGO" )
+		self.enemy_frame = self._create_team_frame( "EQUIPO ENEMIGO", "enemy" )
 
 		teams_layout.addWidget( self.enemy_frame )
 
@@ -187,19 +194,28 @@ class MainWindow(QMainWindow):
 	# TEAM FRAME
 	# =====================================================
 
-	def _create_team_frame( self, title: str ) -> QFrame:
+	def _create_team_frame( self, title: str, team_type: str ) -> QFrame:
 
 		frame = QFrame()
 
-		frame.setStyleSheet("""
-			QFrame {
-				background-color: #202020;
-				border: 1px solid #383838;
-				border-radius: 8px;
-			}
-		""")
+		frame.setObjectName(
+			"alliedFrame"
+			if team_type == "allied"
+			else "enemyFrame"
+		)
 
 		layout = QVBoxLayout( frame )
+
+		layout.setContentsMargins(
+			12,
+			12,
+			12,
+			12
+		)
+
+		layout.setSpacing(8)
+
+		header_layout = QHBoxLayout()
 
 		team_title = QLabel(title)
 
@@ -207,15 +223,69 @@ class MainWindow(QMainWindow):
 
 		team_title.setStyleSheet("""
 			QLabel {
-				color: white;
-				font-size: 18px;
+				color: #f2f2f2;
+				font-size: 17px;
 				font-weight: bold;
+				letter-spacing: 1px;
 				border: none;
-				padding: 10px;
 			}
 		""")
 
-		layout.addWidget( team_title )
+		header_layout.addWidget( team_title )
+
+		header_layout.addStretch()
+
+		team_indicator = QLabel(
+			"ALLIED"
+			if team_type == "allied"
+			else "HOSTILE"
+		)
+
+		color = (
+			"#4cc9f0"
+			if team_type == "allied"
+			else "#ff4655"
+		)
+
+		team_indicator.setStyleSheet(f"""
+			QLabel {{
+				color: {color};
+				font-size: 9px;
+				font-weight: bold;
+				border: none;
+			}}
+		""")
+
+		header_layout.addWidget(
+			team_indicator
+		)
+
+		layout.addLayout(
+			header_layout
+		)
+
+		# -------------------------------------------------
+		# SEPARATOR
+		# -------------------------------------------------
+
+		separator = QFrame()
+
+		separator.setFrameShape(
+			QFrame.Shape.HLine
+		)
+
+		separator.setStyleSheet("""
+			QFrame {
+				color: #293946;
+				background-color: #293946;
+				border: none;
+				max-height: 1px;
+			}
+		""")
+
+		layout.addWidget(
+			separator
+		)
 
 		return frame
 
@@ -597,5 +667,58 @@ class MainWindow(QMainWindow):
 		self.recognition_worker = None
 		self.recognition_thread = None
 
+	def _apply_styles(self):
+
+		self.setStyleSheet("""
+			QMainWindow {
+				background-color: #0b1117;
+			}
+
+			QWidget {
+				font-family: "Arial";
+			}
+
+			QLabel {
+				color: #e8edf2;
+			}
+
+			QFrame#teamFrame {
+				background-color: #101820;
+				border: 1px solid #293946;
+				border-radius: 4px;
+			}
+
+			QFrame#alliedFrame {
+				border-left: 3px solid #4cc9f0;
+			}
+
+			QFrame#enemyFrame {
+				border-left: 3px solid #ff4655;
+			}
+
+			QPushButton {
+				background-color: #202c36;
+				color: #d7dee4;
+				border: 1px solid #3a4b59;
+				border-radius: 3px;
+				padding: 8px 18px;
+				font-weight: bold;
+			}
+
+			QPushButton:hover {
+				background-color: #293844;
+				border: 1px solid #f99e1a;
+			}
+
+			QPushButton:pressed {
+				background-color: #172028;
+			}
+
+			QPushButton:disabled {
+				background-color: #151b20;
+				color: #46525c;
+				border: 1px solid #222b32;
+			}
+		""")
 
 

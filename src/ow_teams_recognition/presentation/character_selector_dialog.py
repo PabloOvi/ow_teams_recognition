@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QSize
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
 	QDialog,
@@ -31,8 +31,8 @@ class CharacterSelectorDialog(QDialog):
 		self.setWindowTitle( "Seleccionar personaje" )
 
 		self.setFixedSize(
-			400,
-			500
+			560,
+			620
 		)
 
 		self._create_ui()
@@ -46,14 +46,61 @@ class CharacterSelectorDialog(QDialog):
 
 	def _create_ui(self):
 
+		self.setStyleSheet("""
+			QDialog {
+				background-color: #0b1117;
+			}
+
+			QLabel {
+				color: #e8edf2;
+			}
+
+			QLineEdit {
+				background-color: #151e27;
+				color: white;
+				border: 1px solid #334452;
+				border-radius: 3px;
+				padding: 10px;
+				font-size: 13px;
+			}
+
+			QLineEdit:focus {
+				border: 1px solid #f99e1a;
+			}
+
+			QListWidget {
+				background-color: #101820;
+				border: 1px solid #293946;
+				outline: none;
+			}
+
+			QListWidget::item {
+				background-color: #151e27;
+				border: 1px solid #293946;
+				margin: 5px;
+				padding: 5px;
+			}
+
+			QListWidget::item:hover {
+				background-color: #202d38;
+				border: 1px solid #f99e1a;
+			}
+
+			QListWidget::item:selected {
+				background-color: #2a241b;
+				border: 2px solid #f99e1a;
+			}
+		""")
+
 		layout = QVBoxLayout(self)
 
 		layout.setContentsMargins(
-			15,
-			15,
-			15,
-			15
+			20,
+			20,
+			20,
+			20
 		)
+		layout.setSpacing(12)
 
 
 		# -------------------------------------------------
@@ -64,13 +111,29 @@ class CharacterSelectorDialog(QDialog):
 
 		title.setStyleSheet("""
 			QLabel {
-				color: white;
-				font-size: 18px;
+				color: #f2f2f2;
+				font-size: 24px;
 				font-weight: bold;
+				padding-bottom: 2px;
 			}
 		""")
 
+
 		layout.addWidget( title )
+
+		subtitle = QLabel(
+			"Selecciona el héroe utilizado en esta partida"
+		)
+
+		subtitle.setStyleSheet("""
+			QLabel {
+				color: #71808c;
+				font-size: 11px;
+				border: none;
+			}
+		""")
+
+		layout.addWidget(subtitle)
 
 
 		# -------------------------------------------------
@@ -92,15 +155,17 @@ class CharacterSelectorDialog(QDialog):
 
 		self.character_list = QListWidget()
 
-		self.character_list.setIconSize( self.character_list.iconSize() )
+		self.character_list.setIconSize( QSize(76,76) )
 
 		self.character_list.setViewMode( QListWidget.ViewMode.IconMode )
+
+		self.character_list.setGridSize( QSize(100, 105) )
 
 		self.character_list.setResizeMode( QListWidget.ResizeMode.Adjust )
 
 		self.character_list.setMovement( QListWidget.Movement.Static )
 
-		self.character_list.setSpacing( 10 )
+		self.character_list.setSpacing( 4 )
 
 		self.character_list.itemDoubleClicked.connect( self._select_character )
 
@@ -122,6 +187,29 @@ class CharacterSelectorDialog(QDialog):
 
 
 		select_button = QPushButton( "Seleccionar" )
+
+		select_button.setFixedHeight(38)
+
+		select_button.setCursor( Qt.CursorShape.PointingHandCursor )
+
+		select_button.setStyleSheet("""
+			QPushButton {
+				background-color: #f99e1a;
+				color: #101010;
+				border: none;
+				border-radius: 3px;
+				padding: 0 22px;
+				font-weight: bold;
+			}
+
+			QPushButton:hover {
+				background-color: #ffb347;
+			}
+
+			QPushButton:pressed {
+				background-color: #d98208;
+			}
+		""")
 
 		select_button.clicked.connect( self._select_character )
 

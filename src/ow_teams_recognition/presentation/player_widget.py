@@ -58,9 +58,14 @@ class PlayerWidget(QFrame):
 
 		self.setStyleSheet("""
 			QFrame#playerWidget {
-				background-color: #181818;
-				border: 1px solid #353535;
-				border-radius: 6px;
+				background-color: #151e27;
+				border: 1px solid #2b3945;
+				border-radius: 3px;
+			}
+
+			QFrame#playerWidget:hover {
+				background-color: #1b2732;
+				border: 1px solid #f99e1a;
 			}
 		""")
 
@@ -69,7 +74,7 @@ class PlayerWidget(QFrame):
 		layout.setContentsMargins(
 			8,
 			8,
-			8,
+			12,
 			8
 		)
 
@@ -85,28 +90,26 @@ class PlayerWidget(QFrame):
 
 		self.character_button.setCursor( Qt.CursorShape.PointingHandCursor )
 
-		self.character_button.clicked.connect(
-			self.character_clicked.emit
-		)
+		self.character_button.clicked.connect( self.character_clicked.emit )
 
 		self.character_button.setStyleSheet("""
 			QPushButton {
-				background-color: #252525;
-				border: 1px solid #444444;
-				border-radius: 6px;
-				color: #888888;
-				font-size: 24px;
+				background-color: #202c36;
+				border: 1px solid #3a4b59;
+				border-radius: 3px;
+				color: #71808c;
+				font-size: 26px;
+				font-weight: bold;
 			}
 
 			QPushButton:hover {
-				background-color: #303030;
-				border: 1px solid #666666;
+				background-color: #293844;
+				border: 1px solid #f99e1a;
+				color: #f99e1a;
 			}
 		""")
 
-		layout.addWidget(
-			self.character_button
-		)
+		layout.addWidget( self.character_button )
 
 
 		# -------------------------------------------------
@@ -119,16 +122,14 @@ class PlayerWidget(QFrame):
 
 		self.name_label.setStyleSheet("""
 			QLabel {
-				color: white;
+				color: #f2f2f2;
 				font-size: 15px;
 				font-weight: bold;
 				border: none;
 			}
 		""")
 
-		layout.addWidget(
-			self.name_label
-		)
+		layout.addWidget( self.name_label )
 
 		self.name_label.entered.connect(
 		lambda:
@@ -138,9 +139,7 @@ class PlayerWidget(QFrame):
 			)
 	)
 
-		self.name_label.left.connect(
-			self.name_unhovered.emit
-		)
+		self.name_label.left.connect( self.name_unhovered.emit )
 
 		layout.addStretch()
 
@@ -173,7 +172,7 @@ class PlayerWidget(QFrame):
 
 		button = QPushButton(text)
 
-		button.setFixedSize(35, 35)
+		button.setFixedSize(50, 50)
 		button.setCheckable(True)
 
 		button.setCursor( Qt.CursorShape.PointingHandCursor )
@@ -207,39 +206,58 @@ class PlayerWidget(QFrame):
 
 	def _update_performance(self):
 
+		colors = {
+			Performance.GOOD: (
+				"#22c55e",
+				"#4ade80"
+			),
+
+			Performance.NEUTRAL: (
+				"#64748b",
+				"#94a3b8"
+			),
+
+			Performance.BAD: (
+				"#ef4444",
+				"#f87171"
+			),
+		}
+
 		for performance, button in ( self.performance_buttons.items() ):
 
 			selected = ( performance == self.player.performance )
+			background, border = colors[performance]
 
 			button.setChecked(selected)
 
 			if selected:
 
-				button.setStyleSheet("""
-					QPushButton {
-						background-color: #3b82f6;
+				button.setStyleSheet(f"""
+					QPushButton {{
+						background-color: {background};
 						color: white;
-						border: 1px solid #60a5fa;
-						border-radius: 5px;
-						font-size: 18px;
+						border: 1px solid {border};
+						border-radius: 3px;
+						font-size: 16px;
 						font-weight: bold;
-					}
+					}}
 				""")
 
 			else:
 
 				button.setStyleSheet("""
 					QPushButton {
-						background-color: #252525;
-						color: #777777;
-						border: 1px solid #404040;
-						border-radius: 5px;
-						font-size: 18px;
+						background-color: #202c36;
+						color: #60717f;
+						border: 1px solid #354653;
+						border-radius: 3px;
+						font-size: 16px;
 					}
 
 					QPushButton:hover {
-						background-color: #303030;
+						background-color: #2b3945;
 						color: white;
+						border: 1px solid #71808c;
 					}
 				""")
 
@@ -266,10 +284,10 @@ class PlayerWidget(QFrame):
 
 				button.setStyleSheet("""
 					QPushButton {
-						background-color: #202020;
-						color: #444444;
-						border: 1px solid #303030;
-						border-radius: 5px;
+						background-color: #171e24;
+						color: white;
+						border: 1px solid #26313a;
+						border-radius: 3px;
 					}
 				""")
 
@@ -284,6 +302,7 @@ class PlayerWidget(QFrame):
 			self.character_button.setIcon( QIcon() )
 
 			self.character_button.setText( "+" )
+			self.character_button.setIconSize(QSize(52, 52))
 
 			return
 

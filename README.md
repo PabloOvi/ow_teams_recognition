@@ -1,19 +1,17 @@
 # Overwatch Teams Recognition
 
-Desktop application for recognizing Overwatch teams
-using OCR and storing match history.
+Aplicacion de escritorio para obtener los equipos de Overwatch y guardalos usando OCR.
 
 ## Features
 
-- Capture the Overwatch scoreboard
-- Recognize player names using OCR
-- Identify allied and enemy teams
-- Select the played character
-- Register player performance
-- Store match history
-- View previous player matches
+- Capturar el marcador de Overwatch
+- Reconocer los nombres de los jugadores mediante OCR
+- Identificar los equipos aliados y enemigos
+- Seleccionar el personaje utilizado
+- Registrar el rendimiento de los jugadores
+- Almacenar el historial de partidas
 
-## Technologies
+## Tecnologías 
 
 - Python
 - PyQt6
@@ -21,6 +19,6 @@ using OCR and storing match history.
 - OpenCV
 - SQLite
 
-## Architecture
+## Arquitectura
 
 ![Architecture](assets/architecture.png)

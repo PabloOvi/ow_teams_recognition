@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
-from PyQt6.QtWidgets import ( QFrame, QLabel, QHBoxLayout, QPushButton, )
+from PyQt6.QtWidgets import ( QFrame, QLabel, QHBoxLayout, QPushButton, QLineEdit)
 from pathlib import Path
 from PyQt6.QtGui import QIcon
 
@@ -11,6 +11,7 @@ class HoverLabel(QLabel):
 
 	entered = pyqtSignal()
 	left = pyqtSignal()
+	double_clicked = pyqtSignal()
 
 
 	def enterEvent(self, event):
@@ -25,6 +26,30 @@ class HoverLabel(QLabel):
 		self.left.emit()
 
 		super().leaveEvent( event )
+
+	def mouseDoubleClickEvent(self, event):
+
+		if event.button() == Qt.MouseButton.LeftButton:
+
+			self.double_clicked.emit()
+
+		super().mouseDoubleClickEvent(event)
+
+class NameEdit(QLineEdit):
+
+	cancelled = pyqtSignal()
+
+
+	def keyPressEvent(self, event):
+
+		if event.key() == Qt.Key.Key_Escape:
+
+			self.cancelled.emit()
+
+			return
+
+		super().keyPressEvent(event)
+
 
 
 
@@ -118,6 +143,8 @@ class PlayerWidget(QFrame):
 
 		self.name_label = HoverLabel()
 
+		self.name_label.double_clicked.connect(	self._start_name_edit )
+
 		self.name_label.setMinimumWidth(160)
 
 		self.name_label.setStyleSheet("""
@@ -129,17 +156,49 @@ class PlayerWidget(QFrame):
 			}
 		""")
 
-		layout.addWidget( self.name_label )
+		layout.addWidget(self.name_label)
 
 		self.name_label.entered.connect(
-		lambda:
-			self.name_hovered.emit(
-				self.player.name,
-				self.player.team.value
-			)
-	)
+			lambda:
+				self.name_hovered.emit(
+					self.player.name,
+					self.player.team.value
+				)
+		)
 
-		self.name_label.left.connect( self.name_unhovered.emit )
+		self.name_label.left.connect(
+			self.name_unhovered.emit
+		)
+
+		self.name_label.double_clicked.connect(
+			self._start_name_edit
+		)
+
+		self.name_edit = NameEdit()
+
+		self.name_edit.cancelled.connect( self._cancel_name_edit )
+
+		self.name_edit.setMinimumWidth(160)
+
+		self.name_edit.setStyleSheet("""
+			QLineEdit {
+				background-color: #202c36;
+				color: #f2f2f2;
+				border: 1px solid #f99e1a;
+				border-radius: 3px;
+				padding: 4px 6px;
+				font-size: 15px;
+				font-weight: bold;
+			}
+		""")
+
+		self.name_edit.returnPressed.connect(
+			self._finish_name_edit
+		)
+
+		self.name_edit.hide()
+
+		layout.addWidget(self.name_edit)
 
 		layout.addStretch()
 
@@ -341,3 +400,32 @@ class PlayerWidget(QFrame):
 		self.character_button.setIcon( QIcon( str(icon_path) ) )
 
 		self.character_button.setIconSize( QSize(52, 52) )
+
+	def _start_name_edit(self):
+
+		self.name_edit.setText(self.player.name)
+
+		self.name_label.hide()
+		self.name_edit.show()
+
+		self.name_edit.setFocus()
+		self.name_edit.selectAll()
+
+	def _finish_name_edit(self):
+
+		name = self.name_edit.text().strip()
+
+		if name:
+
+			self.player.name = name
+			self.name_label.setText(name)
+
+		self.name_edit.hide()
+		self.name_label.show()
+
+	def _cancel_name_edit(self):
+
+		self.name_edit.hide()
+		self.name_label.show()
+
+

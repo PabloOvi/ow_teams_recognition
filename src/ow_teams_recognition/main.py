@@ -78,10 +78,9 @@ def main():
 	# GLOBAL HOTKEYS
 	# =====================================================
 
-	keyboard.add_hotkey(
-		"f9",
-		window.f9_pressed.emit
-	)
+	keyboard.add_hotkey("f9", window.f9_pressed.emit)
+	keyboard.add_hotkey("tab+f9", window.f9_pressed.emit)
+
 
 
 	sys.exit( app.exec() )

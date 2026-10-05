@@ -1,3 +1,6 @@
+import cv2
+import numpy as np
+
 from ..domain.enums import Team
 from ..domain.match import Match
 from ..domain.player import Player
@@ -31,28 +34,28 @@ class RecognitionService:
 		if team == Team.ALLIED:
 
 			rows = [
-				(300, 370),
-				(410, 480),
-				(520, 580),
-				(625, 685),
-				(740, 790)
+				(190, 240),
+				(260, 310),
+				(330, 380),
+				(390, 440),
+				(450, 505)
 			]
 
-			x1 = 210
-			x2 = 625
+			x1 = 410
+			x2 = 600
 
 		else:
 
 			rows = [
-				(320, 380),
-				(430, 480),
-				(520, 580),
-				(625, 685),
-				(730, 790)
+				(600, 650),
+				(660, 710),
+				(730, 780),
+				(790, 850),
+				(860, 910)
 			]
 
-			x1 = 1300
-			x2 = 1600
+			x1 = 370
+			x2 = 600
 
 
 		players = []
@@ -60,17 +63,51 @@ class RecognitionService:
 		for y1, y2 in rows:
 
 			crop = frame[
-							y1:y2,
-							x1:x2
+				y1:y2,
+				x1:x2
 			]
+
+			# Convertimos todo lo que no sea blanco a negro.
+			crop = self._filter_colors( crop )
 
 			text = self.ocr_reader.read( crop )
 
-			name = text.strip()
+			name = text.replace( " ", "" ).upper()
 
 			if not name:
 				continue
 
-			players.append( Player( name = name, team = team ) )
+			players.append( Player( name= name, team= team ) )
 
 		return players
+
+
+	def _filter_colors( self, crop ):
+
+		# Convertimos BGR -> HSV para poder distinguir el blanco de colores.
+		hsv = cv2.cvtColor(
+			crop,
+			cv2.COLOR_BGR2HSV
+		)
+
+		# Definimos qué consideramos "blanco".
+
+		lower = np.array([
+			0,
+			0,
+			160
+		])
+
+		upper = np.array([
+			255,
+			20,
+			255
+		])
+
+		mask = cv2.inRange(
+			hsv,
+			lower,
+			upper
+		)
+
+		return mask
